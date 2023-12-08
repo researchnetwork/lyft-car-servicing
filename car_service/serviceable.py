@@ -18,3 +18,8 @@ class Battery(Serviceable):
     @abstractmethod
     def needs_service(self):
         pass
+
+class Tire(Serviceable):
+    @abstractmethod
+    def needs_service(self):
+        pass
