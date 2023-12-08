@@ -1,6 +1,6 @@
 import unittest
 from datetime import date
-from lyftproject import Carfactory, SpindlerBattery, NubbinBattery, WilloughbyEngine, CapuletEngine, SternmanEngine, Car
+from lyftproject import CarriganTire, OctoprimeTire, Carfactory, SpindlerBattery, NubbinBattery, WilloughbyEngine, CapuletEngine, SternmanEngine, Car
 
 
 class TestEngine(unittest.TestCase):
@@ -38,7 +38,7 @@ class TestEngine(unittest.TestCase):
 class TestBattery(unittest.TestCase):
     def test_spindler_battery_needs_service_true(self):
         current_date = date(2023, 11, 1)
-        last_service_date = date(2021, 11, 1)
+        last_service_date = date(2020, 11, 1)
         battery = SpindlerBattery(current_date, last_service_date)
         result = battery.needs_service()
         self.assertTrue(result)  # SpindlerBattery needs service (difference in years >= 2)
@@ -69,14 +69,16 @@ class TestCar(unittest.TestCase):
     def test_car_needs_service_true(self):
         engine = WilloughbyEngine(65000, 20000)
         battery = SpindlerBattery(date(2023, 11, 1), date(2021, 11, 1))
-        car = Car(engine, battery)
+        tire = OctoprimeTire(wear_values=[0.6, 0.7, 0.8, 0.95])
+        car = Car(engine, battery, tire)
         result = car.needs_service()
         self.assertTrue(result)  # Car needs service as at least one component needs service
 
     def test_car_needs_service_false(self):
         engine = CapuletEngine(25000, 10000)
         battery = NubbinBattery(date(2023, 11, 1), date(2020, 11, 1))
-        car = Car(engine, battery)
+        tire = CarriganTire(wear_values = [0.1, 0.2, 0.8, 0.4])
+        car = Car(engine, battery, tire)
         result = car.needs_service()
         self.assertFalse(result)  # Car doesn't need service as no component needs service
 
@@ -86,35 +88,40 @@ class TestCarFactory(unittest.TestCase):
         car_factory = Carfactory()
         current_date = date(2023, 11, 1)
         last_service_date = date(2021, 11, 1)
-        result = car_factory.create_calliope(current_date, last_service_date, 50000, 20000)
+        wear_values = [0.6, 0.7, 0.8, 0.95]
+        result = car_factory.create_calliope(current_date, last_service_date, 50000, 20000,wear_values)
         self.assertTrue(result)  # calliope car needs service based on the difference in the current_mileage - last_service_mileage >= 60000, and the date
 
     def test_create_glissade(self):
         car_factory = Carfactory()
         current_date = date(2023, 11, 1)
         last_service_date = date(2021, 11, 1)
-        result = car_factory.creat_glissade(current_date, last_service_date, 30000, 10000)
+        wear_values = [0.6, 0.7, 0.8, 0.95]
+        result = car_factory.creat_glissade(current_date, last_service_date, 30000, 10000,wear_values)
         self.assertTrue(result)  # glissade car needs service based on the difference in the current_mileage - last_service_mileage >= 60000, and the date
 
     def test_create_palindrome(self):
         car_factory = Carfactory()
         current_date = date(2023, 11, 1)
         last_service_date = date(2020, 11, 1)
-        result = car_factory.creat_palindrome(current_date, last_service_date, False)
+        wear_values = [0.6, 0.7, 0.8, 0.95]
+        result = car_factory.creat_palindrome(current_date, last_service_date, False,wear_values)
         self.assertTrue(result)  # palindrome car needs service based on the difference in the current_date and last_service_date exceeded 2 years
 
     def test_create_rorschach(self):
         car_factory = Carfactory()
         current_date = date(2023, 11, 1)
-        last_service_date = date(2021, 11, 1)
-        result = car_factory.create_rorschach(current_date, last_service_date, 50000, 10000)
-        self.assertFalse(result)  # rorschach car does not need service based on the difference in the current_date and last_service_date did not exceed 4 years
+        last_service_date = date(2020, 11, 1)
+        wear_values = [0.1, 0.2, 0.8, 0.4]
+        result = car_factory.create_rorschach(current_date, last_service_date, 3000, 1000,wear_values)
+        self.assertFalse(result)  # rorschach car does not need service based on the miliage, wear values and service date
 
     def test_create_thovex(self):
         car_factory = Carfactory()
         current_date = date(2023, 11, 1)
         last_service_date = date(2021, 11, 1)
-        result = car_factory.create_thovex(current_date, last_service_date, 30000, 10000)
+        wear_values = [0.6, 0.7, 0.8, 0.95]
+        result = car_factory.create_thovex(current_date, last_service_date, 30000, 10000,wear_values)
         self.assertTrue(result)  # thovex car needs service based on the difference in the current_date and last_service_date is exaltly 2 years
 
 
